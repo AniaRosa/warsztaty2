@@ -1,5 +1,7 @@
 package pl.coderslab.warsztaty2.models;
 
+import java.util.StringJoiner;
+
 public class Solution {
 
     private int id;
@@ -66,5 +68,17 @@ public class Solution {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Solution.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("created=" + created)
+                .add("updated=" + updated)
+                .add("description='" + description + "'")
+                .add("exerciseId=" + exercisesId)
+                .add("userId=" + userId)
+                .toString();
     }
 }

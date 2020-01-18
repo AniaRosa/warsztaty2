@@ -1,5 +1,7 @@
 package pl.coderslab.warsztaty2.models;
 
+import java.util.StringJoiner;
+
 public class Group {
 
     private int id;
@@ -26,5 +28,13 @@ public class Group {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Group.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("name='" + name + "'")
+                .toString();
     }
 }

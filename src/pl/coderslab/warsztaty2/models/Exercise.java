@@ -1,5 +1,7 @@
 package pl.coderslab.warsztaty2.models;
 
+import java.util.StringJoiner;
+
 public class Exercise {
 
     private int id;
@@ -37,4 +39,14 @@ public class Exercise {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Exercise.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("title='" + title + "'")
+                .add("description='" + description + "'")
+                .toString();
+    }
+
 }

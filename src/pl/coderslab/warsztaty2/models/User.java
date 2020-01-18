@@ -2,6 +2,8 @@ package pl.coderslab.warsztaty2.models;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.StringJoiner;
+
 public class User {
 
     private int id;
@@ -62,5 +64,16 @@ public class User {
 
     public void setUserGroupId(int userGroupId) {
         this.userGroupId = userGroupId;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", User.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("userName='" + userName + "'")
+                .add("email='" + email + "'")
+                .add("password='" + password + "'")
+                .add("groupId=" + userGroupId)
+                .toString();
     }
 }
