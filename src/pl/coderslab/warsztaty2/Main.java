@@ -22,13 +22,14 @@ final static String add = "add", edit = "edit", view = "view", delete = "delete"
         while (!ok) {
             option = optionsSelection();
             if (option.equals(add)) {
-                User user = new User();
+                //User user = new User();
                 UserDao userDao1 = new UserDao();
                 String userName = getData("Podaj nazwę użytkownika: ");
                 String email = getData("Podaj adres email: ");
                 String password = getData("Podaj hasło: ");
                 //walidacja TODO
                 int groupId = Integer.parseInt(getData("Podaj numer ID grupy: "));
+                User user = new User(userName, email, password, groupId);
                 userDao1.create(user);
                 ok = true;
             } else if (option.equals(edit)) {
