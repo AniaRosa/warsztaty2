@@ -1,9 +1,7 @@
 package pl.coderslab.warsztaty2;
 
 import pl.coderslab.warsztaty2.daos.ExerciseDao;
-import pl.coderslab.warsztaty2.daos.UserDao;
 import pl.coderslab.warsztaty2.models.Exercise;
-import pl.coderslab.warsztaty2.models.User;
 
 import java.util.Scanner;
 
@@ -17,7 +15,7 @@ public class ExerciseManagement {
         String option = "", quitStatus = "";
 
         while (!quitStatus.equals(quitExercisePart)) {
-            getUsersList();
+            getExercisesList();
             quitStatus = makeActionOnExercise(option);
         }
     }
@@ -69,7 +67,7 @@ public class ExerciseManagement {
         return "quitOptionSelection";
     }
 
-    private static void getUsersList() {
+    private static void getExercisesList() {
         ExerciseDao exerciseDao = new ExerciseDao();
         Exercise[] allExercises = exerciseDao.findAll();
         for (Exercise exercise : allExercises) {
