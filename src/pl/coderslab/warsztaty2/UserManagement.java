@@ -72,6 +72,7 @@ final static String typeGroupId = "groupId", typeId = "id", typePassword = "pass
                     id = getData("Podaj numer id: ");
                 }
                 userDao.delete(Integer.parseInt(id));
+                System.out.println("Użytkownik usunięty");
                 correctOption = true;
             } else if (option.equals(quit)) {
                 correctOption = true;
@@ -107,14 +108,6 @@ final static String typeGroupId = "groupId", typeId = "id", typePassword = "pass
         Scanner scanner = new Scanner(System.in);
         System.out.println(question);
         return scanner.nextLine();
-    }
-
-    private static boolean checkPassword(String password, User user) {
-        if (BCrypt.checkpw(password, user.getPassword())) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private static boolean validateData(String data, String type) {
