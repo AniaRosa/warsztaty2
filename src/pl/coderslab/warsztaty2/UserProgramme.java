@@ -13,9 +13,9 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class UserProgramme {
-    final static String typeUserMail = "typeUserMail", typeExercises = "typeExercises", typeExercisesWithoutSolution = "typeExercisesWithoutSolution";
-    final static String add = "add", view = "view", quit = "quit";
-    final static String quitOptionSelection = "quitOptionSelection", quitExercisePart = "quitExercisePart";
+    final static String typeUserMail = "typeUserMail", typeExercisesWithoutSolution = "typeExercisesWithoutSolution", typeSolutions = "typeSolutions";
+    final static String add = "add", view = "view", quit = "quit", update = "update";
+    final static String quitExercisePart = "quitExercisePart";
 
     public static void main(String[] args) {
 
@@ -65,7 +65,6 @@ public class UserProgramme {
 
     private static String makeActionOnUserProgramme(String option, int id) {
         boolean correctOption = false;
-        ExerciseDao exerciseDao = new ExerciseDao();
         SolutionDao solutionDao = new SolutionDao();
         while (!correctOption) {
             option = optionsSelection();
@@ -79,16 +78,57 @@ public class UserProgramme {
                     System.out.println("Niepoprawny numer id");
                     exerciseId = getData("Podaj id zadania, do którego chcesz dodać rozwiązanie");
                 }
-                String description = getData("Podaj treść rozwiązania");
+                Solution[] solutionsByExerciseId = solutionDao.findAllByExerciseId(Integer.parseInt(exerciseId));
 
-                Solution solution = new Solution();
-                solution.setDescription(description);
-                solution.setExercisesId(Integer.parseInt(exerciseId));
-                solution.setUserId(id);
-                solution.setCreated(today());
-                solutionDao.create(solution);
+                String description = getData("Podaj treść rozwiązania");
+                boolean solutionToBeUpdated = false;
+                Solution solutionToUpdate;
+                int sId = 0;
+                for (Solution s : solutionsByExerciseId) {
+                    if (s.getDescription() == null) {
+                        solutionToBeUpdated = true;
+                        sId += s.getId();
+                    }
+                }
+
+                //Jeżeli rozwiązanie nie ma jeszcze wypełnionego descripition,
+                // to zamiast dodawać nowe rozwiązanie, updatuje to, które nie ma rozwiązania
+                if (solutionToBeUpdated) {
+                    solutionToUpdate = solutionDao.read(sId);
+                    solutionToUpdate.setDescription(description);
+                    solutionToUpdate.setUserId(id);
+                    solutionToUpdate.setUpdated(today());
+                    solutionToUpdate.setCreated(solutionToUpdate.getCreated());
+                    solutionToUpdate.setExercisesId(Integer.parseInt(exerciseId));
+                    solutionDao.update(solutionToUpdate);
+                } else {
+                    Solution solution = new Solution();
+                    solution.setDescription(description);
+                    solution.setExercisesId(Integer.parseInt(exerciseId));
+                    solution.setUserId(id);
+                    solution.setCreated(today());
+                    solutionDao.create(solution);
+                }
+
                 correctOption = true;
                 System.out.println("Rozwiązanie dodane");
+            } else if (option.equals(update)) {
+                getList(id);
+                String solutionId = getData("Podaj id rozwiązania, które chcesz poprawić");
+                while (!validateData(solutionId, typeSolutions, id)) {
+                    System.out.println("Niepoprawny numer id");
+                    solutionId = getData("Podaj id rozwiązania, które chcesz poprawić");
+                }
+                String description = getData("Podaj nową treść rozwiązania");
+                Solution solutionToUpdate = solutionDao.read(Integer.parseInt(solutionId));
+                solutionToUpdate.setDescription(description);
+                solutionToUpdate.setUserId(id);
+                solutionToUpdate.setUpdated(today());
+                solutionToUpdate.setCreated(solutionToUpdate.getCreated());
+                solutionToUpdate.setExercisesId(solutionToUpdate.getExercisesId());
+                solutionDao.update(solutionToUpdate);
+                correctOption = true;
+                System.out.println("Rozwiązanie poprawione");
             } else if (option.equals(view)) {
                 correctOption = true;
                 getList(id);
@@ -162,9 +202,14 @@ public class UserProgramme {
             for (int i = 0; i < listToValidation.length; i++) {
                 listToValidation[i] = String.valueOf(exercises[i].getId());
             }
-        }
-
-        else {
+        } else if (type.equals(typeSolutions)) {
+            SolutionDao solutionDao = new SolutionDao();
+            Solution[] allUserSolutions = solutionDao.findAllByUserId(id);
+            listToValidation = new String[allUserSolutions.length];
+            for (int i = 0; i < listToValidation.length; i++) {
+                listToValidation[i] = String.valueOf(allUserSolutions[i].getId());
+            }
+        } else {
             ExerciseDao exerciseDao = new ExerciseDao();
             Exercise[] allExercises = exerciseDao.findAll();
             listToValidation = new String[allExercises.length];
@@ -191,6 +236,7 @@ public class UserProgramme {
     private static String optionsSelection() {
         System.out.println("Wybierz jedną z opcji:");
         System.out.println("--> add – dodawanie rozwiązania,");
+        System.out.println("--> update – poprawienie rozwiązania,");
         System.out.println("--> view – przeglądanie swoich rozwiązań,");
         System.out.println("--> quit – zakończenie programu.");
         Scanner scanner = new Scanner(System.in);
